@@ -6,6 +6,9 @@
   "homepage": "",
   "license": "ISC",
   "main": "lib/core.js",
+  "bin": {
+    "immoc-cli-dev-zed": "bin/index.js"
+  },
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -19,5 +22,6 @@
   "dependencies": {
     "@immoc-cli-dev-zed/utils": "^1.0.2",
     "@yss-cli/utils": "^1.1.2"
-  }
+  },
+  "gitHead": "c9a7936d89dba04cd7851c81d2c688a198a7f6b9"
 }
