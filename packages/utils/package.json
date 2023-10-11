@@ -1,0 +1,19 @@
+{
+  "name": "@immoc-cli-dev-zed/utils",
+  "version": "1.0.0",
+  "description": "immoc-cli-dev-zed utils",
+  "author": "ck <zed.chenkai@outlook.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Error: run tests from utils\" && exit 1"
+  }
+}
