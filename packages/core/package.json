@@ -1,6 +1,6 @@
 {
   "name": "@immoc-cli-dev-zed/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "immoc-cli-dev-zed core",
   "author": "ck <zed.chenkai@outlook.com>",
   "homepage": "",
@@ -20,7 +20,7 @@
     "test": "echo \"Error: run tests from core\" && exit 1"
   },
   "dependencies": {
-    "@immoc-cli-dev-zed/utils": "^1.0.0",
+    "@immoc-cli-dev-zed/utils": "^1.0.1",
     "@yss-cli/utils": "^1.1.2"
   },
   "gitHead": "893d769a52b3fb98fb8e78a19f6bbc20682b6b7c"
