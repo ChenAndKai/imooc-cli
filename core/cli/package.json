@@ -2,7 +2,6 @@
   "name": "@immoc-cli-dev-zed/core",
   "version": "1.0.3",
   "description": "immoc-cli-dev-zed core",
-  "author": "ck <zed.chenkai@outlook.com>",
   "homepage": "",
   "license": "ISC",
   "main": "lib/core.js",
@@ -20,8 +19,11 @@
     "test": "echo \"Error: run tests from core\" && exit 1"
   },
   "dependencies": {
-    "@immoc-cli-dev-zed/utils": "^1.0.3",
-    "@yss-cli/utils": "^1.1.2"
+    "@immoc-cli-dev-zed/log": "file:../../utils/log",
+    "@immoc-cli-dev-zed/utils": "file:../../utils/utils",
+    "@yss-cli/utils": "^1.1.2",
+    "import-local": "^3.1.0",
+    "npmlog": "^7.0.1"
   },
   "gitHead": "ae578f36f3c85e69dc0d4ca1794fc4579e3217ce",
   "publishConfig": {
