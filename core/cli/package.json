@@ -15,15 +15,15 @@
   "files": [
     "lib"
   ],
-  "scripts": {
-    "test": "echo \"Error: run tests from core\" && exit 1"
-  },
   "dependencies": {
     "@immoc-cli-dev-zed/log": "file:../../utils/log",
-    "@immoc-cli-dev-zed/utils": "file:../../utils/utils",
-    "@yss-cli/utils": "^1.1.2",
+    "colors": "^1.4.0",
     "import-local": "^3.1.0",
-    "npmlog": "^7.0.1"
+    "npmlog": "^7.0.1",
+    "path-exists": "^4.0.0",
+    "root-check": "^1.0.0",
+    "semver": "^7.5.4",
+    "user-home": "^3.0.0"
   },
   "gitHead": "ae578f36f3c85e69dc0d4ca1794fc4579e3217ce",
   "publishConfig": {
