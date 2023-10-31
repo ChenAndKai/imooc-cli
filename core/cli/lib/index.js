@@ -2,32 +2,103 @@
 
 const path = require('path');
 const pkg = require('../package.json');
-const log = require('@immoc-cli-dev-zed/log');
 const semver = require('semver');
 const colors = require('colors');
 const rootCheck = require('root-check');
 const userHome = require('user-home');
+const commander = require('commander');
 const pathExists = require('path-exists').sync;
+const log = require('@immoc-cli-dev-zed/log');
+const init = require('@immoc-cli-dev-zed/init');
+const exec = require('@immoc-cli-dev-zed/exec');
 
 const constant = require('./constant');
+const program = new commander.Command();
 
-let args;
+/**
+ * Commander库可实现类似功能
+ * 通过program.on方法监听命令中输入的属性
+    let args;
+    function checkInputArgs() {
+        const minimist = require('minimist');
+        args = minimist(process.argv.slice(2));
+        checkArgs();
+    }
+
+    function checkArgs() {
+        if (args.debug) {
+            process.env.LOG_LEVEL = 'verbose';
+        } else {
+            process.env.LOG_LEVEL = 'info';
+        }
+        log.level = process.env.LOG_LEVEL;
+    }
+ */
 
 async function core() {
     try {
-        checkVersion();
-        checkNodeVersion();
-        checkRoot();
-        checkUserHome();
-        checkInputArgs();
-        checkEnv();
-        await checkGlobalUpdate();
+        prepare();
+        registerCommand();
     } catch (e) {
         log.error(e.message);
     }
 }
 
-function checkVersion() {
+async function prepare() {
+    checkPkgVersion();
+    checkNodeVersion();
+    checkRoot();
+    checkUserHome();
+    checkEnv();
+    await checkGlobalUpdate();
+}
+
+function registerCommand() {
+    program
+        .name(Object.keys(pkg.bin)[0])
+        .usage('<command> [options]')
+        .version(pkg.version)
+        .option('-d, --debug', '是否开启调试模式', false)
+        .option('-tp, --targetPath <targetPath>', '是否指定本地调试文件路径', '');
+    
+    program
+        .command('init [projectName]')
+        .option('-f, --force', '是否强制初始化项目')
+        .action(exec);
+    
+    //开启debug模式
+    program.on('option:debug', function () {
+        if (program.opts().debug) {
+            process.env.LOG_LEVEL = 'verbose';
+        } else {
+            process.env.LOG_LEVEL = 'info';
+        }
+        log.level = process.env.LOG_LEVEL;
+    })
+
+    //指定targetPath
+    program.on('option:targetPath', function () {
+        process.env.CLI_TARGET_PATH = program.opts().targetPath;
+    })
+
+    //监听未知命令
+    program.on('command:*', function (obj) {
+        const availableCommands = program.commands.map(cmd => cmd.name);
+        console.log(colors.red(`未知命令: ${obj[0]}`));
+        if (availableCommands.length) {
+            console.log(colors.red(`可用命令: ${availableCommands.join(',')}`));
+        }
+    })
+
+    program.parse(process.argv);
+
+    if (program.args && program.args.length < 1) {
+        program.outputHelp();
+        console.log();
+    } 
+}
+    
+function checkPkgVersion() {
     log.notice('cli', pkg.version);
 }
 
@@ -47,21 +118,6 @@ function checkUserHome() {
     if (!userHome || !pathExists(userHome)) {
         throw new Error(colors.red('当前登录用户主目录不存在!'));
     }
-}
-
-function checkInputArgs() {
-    const minimist = require('minimist');
-    args = minimist(process.argv.slice(2));
-    checkArgs();
-}
-
-function checkArgs() {
-    if (args.debug) {
-        process.env.LOG_LEVEL = 'verbose';
-    } else {
-        process.env.LOG_LEVEL = 'info';
-    }
-    log.level = process.env.LOG_LEVEL;
 }
 
 function checkEnv() {

@@ -16,12 +16,14 @@
     "lib"
   ],
   "dependencies": {
-    "@immoc-cli-dev-zed/log": "file:../../utils/log",
     "@immoc-cli-dev-zed/get-npm-info": "file:../../utils/get-npm-info",
+    "@immoc-cli-dev-zed/log": "file:../../utils/log",
+    "@immoc-cli-dev-zed/init": "file:../../commands/init",
+    "@immoc-cli-dev-zed/exec": "file:../exec",
     "colors": "^1.4.0",
+    "commander": "^11.1.0",
     "dotenv": "^16.3.1",
     "import-local": "^3.1.0",
-    "minimist": "^1.2.8",
     "npmlog": "^7.0.1",
     "path-exists": "^4.0.0",
     "root-check": "^1.0.0",
