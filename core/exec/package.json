@@ -1,8 +1,8 @@
 {
-  "name": "@immoc-cli-dev-zed/init",
+  "name": "@immoc-cli-dev-zed/exec",
   "version": "1.0.0",
-  "description": "immoc-cli-dev-zed init",
-  "author": "ck <zed.chenkai@outlook.com>",
+  "description": "immoc-cli-dev-zed exec",
+  "author": "chenkai <1078410321@qq.com>",
   "homepage": "https://github.com/ChenAndKai/imooc-cli#readme",
   "license": "ISC",
   "main": "lib/index.js",
@@ -25,5 +25,9 @@
   },
   "bugs": {
     "url": "https://github.com/ChenAndKai/imooc-cli/issues"
+  },
+  "dependencies": {
+    "@immoc-cli-dev-zed/package": "file:../../models/package",
+    "@immoc-cli-dev-zed/log": "file:../../utils/log"
   }
 }
