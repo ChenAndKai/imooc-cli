@@ -2,6 +2,31 @@
 # yarn lockfile v1
 
 
+"@immoc-cli-dev-zed/exec@file:../exec":
+  "resolved" "file:../exec"
+  "version" "1.0.0"
+  dependencies:
+    "@immoc-cli-dev-zed/log" "file:../../utils/log"
+    "@immoc-cli-dev-zed/package" "file:../../models/package"
+
+"@immoc-cli-dev-zed/get-npm-info@file:../../utils/get-npm-info":
+  "resolved" "file:../../utils/get-npm-info"
+  "version" "1.0.0"
+  dependencies:
+    "axios" "^1.5.1"
+    "semver" "^7.5.4"
+    "url-join" "^4.0.0"
+
+"@immoc-cli-dev-zed/init@file:../../commands/init":
+  "resolved" "file:../../commands/init"
+  "version" "1.0.0"
+
+"@immoc-cli-dev-zed/log@file:../../utils/log":
+  "resolved" "file:../../utils/log"
+  "version" "1.0.0"
+  dependencies:
+    "npmlog" "^7.0.1"
+
 "abort-controller@^3.0.0":
   "integrity" "sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg=="
   "resolved" "https://registry.npmjs.org/abort-controller/-/abort-controller-3.0.0.tgz"
@@ -71,6 +96,11 @@
   "resolved" "https://registry.npmjs.org/colors/-/colors-1.4.0.tgz"
   "version" "1.4.0"
 
+"commander@^11.1.0":
+  "integrity" "sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ=="
+  "resolved" "https://registry.npmjs.org/commander/-/commander-11.1.0.tgz"
+  "version" "11.1.0"
+
 "console-control-strings@^1.1.0":
   "integrity" "sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ=="
   "resolved" "https://registry.npmjs.org/console-control-strings/-/console-control-strings-1.1.0.tgz"
@@ -85,6 +115,11 @@
   "integrity" "sha512-bd2L678uiWATM6m5Z1VzNCErI3jiGzt6HGY8OVICs40JQq/HALfbyNJmp0UDakEY4pMMaN0Ly5om/B1VI/+xfQ=="
   "resolved" "https://registry.npmjs.org/delegates/-/delegates-1.0.0.tgz"
   "version" "1.0.0"
+
+"dotenv@^16.3.1":
+  "integrity" "sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ=="
+  "resolved" "https://registry.npmjs.org/dotenv/-/dotenv-16.3.1.tgz"
+  "version" "16.3.1"
 
 "downgrade-root@^1.0.0":
   "integrity" "sha512-K/QnPfqybcxP6rriuM17fnaQ/zDnG0hh8ISbm9szzIqZSI4wtfaj4D5oL6WscT2xVFQ3kDISZrrgeUtd+rW8pQ=="
@@ -228,11 +263,6 @@
   "integrity" "sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w=="
   "resolved" "https://registry.npmjs.org/path-exists/-/path-exists-4.0.0.tgz"
   "version" "4.0.0"
-
-"path-exists@^5.0.0":
-  "integrity" "sha512-RjhtfwJOxzcFmNOi6ltcbcu4Iu+FL3zEj83dk4kAS+fVpTxXLO1b38RvJgT/0QwvV/L3aY9TAnyv0EOqW4GoMQ=="
-  "resolved" "https://registry.npmjs.org/path-exists/-/path-exists-5.0.0.tgz"
-  "version" "5.0.0"
 
 "pkg-dir@^4.2.0":
   "integrity" "sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ=="

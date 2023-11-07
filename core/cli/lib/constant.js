@@ -1,7 +1,5 @@
-const LOWEST_NODE_VERSION = '12.0.0'
-const DEFAULT_CLI_HOME = '.immoc-cli'
+const DEFAULT_CLI_HOME = '.immoc-cli-dev'
 
 module.exports = {
-    LOWEST_NODE_VERSION,
     DEFAULT_CLI_HOME
 }

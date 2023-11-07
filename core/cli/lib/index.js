@@ -9,7 +9,6 @@ const userHome = require('user-home');
 const commander = require('commander');
 const pathExists = require('path-exists').sync;
 const log = require('@immoc-cli-dev-zed/log');
-const init = require('@immoc-cli-dev-zed/init');
 const exec = require('@immoc-cli-dev-zed/exec');
 
 const constant = require('./constant');
@@ -46,7 +45,6 @@ async function core() {
 
 async function prepare() {
     checkPkgVersion();
-    checkNodeVersion();
     checkRoot();
     checkUserHome();
     checkEnv();
@@ -99,14 +97,6 @@ function registerCommand() {
     
 function checkPkgVersion() {
     log.notice('cli', pkg.version);
-}
-
-function checkNodeVersion() {
-    const currentVersion = process.version;
-    const lowestVersion = constant.LOWEST_NODE_VERSION;
-    if (!semver.gte(currentVersion, lowestVersion)) {
-        throw new Error(colors.red(`immoc-cli-dev-zed 需要安装 v${lowestVersion} 以上版本的 Node`));
-    }
 }
 
 function checkRoot() {
