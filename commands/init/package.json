@@ -25,5 +25,9 @@
   },
   "bugs": {
     "url": "https://github.com/ChenAndKai/imooc-cli/issues"
+  },
+  "dependencies": {
+    "@immoc-cli-dev-zed/command": "file:../../models/command",
+    "@immoc-cli-dev-zed/log": "file:../../utils/log"
   }
 }
