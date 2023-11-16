@@ -62,7 +62,6 @@ async function exec() {
             const cmd = args[args.length - 1];
             const obj = Object.create(null);
             Object.keys(cmd).forEach(key => {
-                
                 if (cmd.hasOwnProperty(key) &&
                     !key.startsWith('_') &&
                     key !== 'parent') {

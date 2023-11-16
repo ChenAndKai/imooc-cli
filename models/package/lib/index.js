@@ -16,7 +16,7 @@ class Package {
         if (!isObject(options)) {
             throw new Error('Package类的参数必须为对象');
         }
-        this.targetPath = options.targetPath;
+        this.targetPath = options.targetPath; //immoc-cli-dev-zed中init命令脚手架的安装目录，而不是需要init项目的目录
         this.storeDir = options.storeDir;//缓存路径
         this.packageName = options.packageName;
         this.packageVersion = options.packageVersion;
