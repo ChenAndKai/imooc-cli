@@ -28,6 +28,9 @@
   },
   "dependencies": {
     "@immoc-cli-dev-zed/command": "file:../../models/command",
-    "@immoc-cli-dev-zed/log": "file:../../utils/log"
+    "@immoc-cli-dev-zed/log": "file:../../utils/log",
+    "fs-extra": "^11.1.1",
+    "inquirer": "^8.0.0",
+    "semver": "^7.5.4"
   }
 }
