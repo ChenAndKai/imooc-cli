@@ -1,11 +1,17 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 const fse = require('fs-extra');
 const inquirer = require('inquirer');
+const userHome = require('user-home');
 const Command = require('@immoc-cli-dev-zed/command');
+const Package = require('@immoc-cli-dev-zed/package');
+const { spinnerStart } = require('@immoc-cli-dev-zed/utils');
 const log = require('@immoc-cli-dev-zed/log');
 const semver = require('semver');
+
+const getProjectTemplate = require('./getProjectTemplate');
 
 const TYPE_PROJECT = 'project';
 const TYPE_COMPONENT = 'component';
@@ -24,7 +30,9 @@ class InitCommand extends Command {
             const projectInfo = await this.prepare();
             if (projectInfo) {
                 log.verbose('projectInfo', projectInfo);
+                this.projectInfo = projectInfo;
                 //下载模板
+                await this.downloadTemplate();
                 //安装模板
             }
             
@@ -33,15 +41,53 @@ class InitCommand extends Command {
         }
     }
 
-    downloadTemplate() {
+    async downloadTemplate() {
         //1、通过项目模板API获取项目模板信息
         //  1) 通过egg.js搭建一套后端系统
-        //  2) 通过npm存储项目模板
+        //  2) 通过npm存储项目模板 (vue-cli/vue-element-admin)
         //  3) 将项目模板信息存储到mongodb数据库
         //  4) 通过egg.js获取mongodb中的数据并且通过API返回
+        const { projectTemplate } = this.projectInfo;
+        const templateInfo = this.template.find(item => item.npmName === projectTemplate);
+        const { npmName, version } = templateInfo;
+        const targetPath = path.resolve(userHome, '.immoc-cli-dev', 'template');
+        const storeDir = path.resolve(userHome, '.immoc-cli-dev', 'template', 'node_modules');
+        const templateNpm = new Package({
+            targetPath,
+            storeDir,
+            packageName: npmName,
+            packageVersion: version
+        })
+        if (!await templateNpm.exists()) {
+            const spinner = spinnerStart('正在下载模板...');
+            try {
+                await templateNpm.install();
+                log.success('下载模板成功');
+            } catch (error) {
+                throw error
+            } finally {
+                spinner.stop(true);
+            }
+        } else {
+            const spinner = spinnerStart('正在更新模板...');
+            try {
+                await templateNpm.update();
+                log.success('更新模板成功');
+            } catch (error) {
+                throw error
+            } finally {
+                spinner.stop(true);
+            }
+        }
     }
 
     async prepare() {
+        //0、判断项目模板是否存在
+        const template = await getProjectTemplate();
+        if (!template || template.length === 0) {
+            throw new Error('项目模板不存在');
+        }
+        this.template = template;
         //1、检查当前目录是否为空
         const localPath = process.cwd();
         if (!this.isDirEmpty(localPath)) {
@@ -137,7 +183,13 @@ class InitCommand extends Command {
                         return v;
                     }
                 }
-                }])
+                }, {
+                    type: 'list',
+                    name: 'projectTemplate',
+                    message: '请选择项目模板',
+                    choices: this.createTemplateChoice()
+                }
+            ])
             
             projectInfo = {
                 ...project,
@@ -147,6 +199,13 @@ class InitCommand extends Command {
             
         }
         return projectInfo;
+    }
+
+    createTemplateChoice() {
+        return this.template.map(item => ({
+            value: item.npmName,
+            name: item.name
+        }))
     }
 
     isDirEmpty(localPath) {
