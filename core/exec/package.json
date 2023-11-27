@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@immoc-cli-dev-zed/package": "file:../../models/package",
-    "@immoc-cli-dev-zed/log": "file:../../utils/log"
+    "@immoc-cli-dev-zed/log": "file:../../utils/log",
+    "@immoc-cli-dev-zed/utils": "file:../../utils/utils"
   }
 }

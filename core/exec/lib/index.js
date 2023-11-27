@@ -3,7 +3,7 @@
 const Package = require('@immoc-cli-dev-zed/package');
 const log = require('@immoc-cli-dev-zed/log');
 const path = require('path');
-const cp = require('child_process');
+const { exec: spawn } = require('@immoc-cli-dev-zed/utils');
 
 const SETTINGS = {
     init: '@immoc-cli-dev-zed/init'
@@ -87,14 +87,6 @@ async function exec() {
             log.error(error.message);   
         }
     } 
-}
-
-function spawn(command, args, options) {
-    const win32 = process.platform === 'win32';
-
-    const cmd = win32 ? 'cmd' : command;
-    const cmdArgs = win32 ? ['/c'].concat(command, args) : args;
-    return cp.spawn(cmd, cmdArgs, options || {});
 }
 
 module.exports = exec;

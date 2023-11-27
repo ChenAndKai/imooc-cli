@@ -7,7 +7,7 @@ const inquirer = require('inquirer');
 const userHome = require('user-home');
 const Command = require('@immoc-cli-dev-zed/command');
 const Package = require('@immoc-cli-dev-zed/package');
-const { spinnerStart } = require('@immoc-cli-dev-zed/utils');
+const { spinnerStart, sleep } = require('@immoc-cli-dev-zed/utils');
 const log = require('@immoc-cli-dev-zed/log');
 const semver = require('semver');
 
@@ -15,6 +15,9 @@ const getProjectTemplate = require('./getProjectTemplate');
 
 const TYPE_PROJECT = 'project';
 const TYPE_COMPONENT = 'component';
+
+const TEMPLATE_TYPE_NORMAL = 'NORMAL';
+const TEMPLATE_TYPE_CUSTOM = 'CUSTOM';
 
 class InitCommand extends Command {
     init() {
@@ -34,11 +37,52 @@ class InitCommand extends Command {
                 //下载模板
                 await this.downloadTemplate();
                 //安装模板
+                await this.installTemplate();
             }
             
         } catch (error) {
             log.error(error.message)
         }
+    }
+
+    async installTemplate() {
+        if (this.templateInfo) {
+            if (!this.templateInfo.type) {
+                this.templateInfo.type = TEMPLATE_TYPE_NORMAL;
+            }
+            if (this.templateInfo.type === TEMPLATE_TYPE_NORMAL) {
+                //安装标准模板
+                await this.installNormalTemplate();
+            } else if (this.templateInfo.type === TEMPLATE_TYPE_CUSTOM) {
+                //安装自定义模板
+                await this.installCustomTemplate();
+            } else {
+                throw new Error('无法识别项目模板类别');
+            }
+        } else {
+            throw new Error('模板信息不存在');
+        }
+    }
+
+    async installNormalTemplate() {
+        //拷贝模板代码至当前目录
+        let spinner = spinnerStart('正在安装模板');
+        try {
+            const templatePath = path.resolve(this.templateNpm.cacheFilePath(), 'template');
+            const targetPath = process.cwd();
+            fse.ensureDirSync(templatePath);
+            fse.ensureDirSync(targetPath);
+            fse.copySync(templatePath, targetPath);
+        } catch (error) {
+            throw error;
+        } finally {
+            spinner.stop(true);
+            log.success('模板安装成功')
+        }
+    }
+
+    async installCustomTemplate() {
+        console.log('安装自定义模板');
     }
 
     async downloadTemplate() {
@@ -58,25 +102,32 @@ class InitCommand extends Command {
             packageName: npmName,
             packageVersion: version
         })
+        this.templateInfo = templateInfo;
         if (!await templateNpm.exists()) {
             const spinner = spinnerStart('正在下载模板...');
             try {
                 await templateNpm.install();
-                log.success('下载模板成功');
             } catch (error) {
                 throw error
             } finally {
                 spinner.stop(true);
+                if (await templateNpm.exists()) {
+                    log.success('下载模板成功');
+                    this.templateNpm = templateNpm;
+                }
             }
         } else {
             const spinner = spinnerStart('正在更新模板...');
             try {
                 await templateNpm.update();
-                log.success('更新模板成功');
             } catch (error) {
                 throw error
             } finally {
                 spinner.stop(true);
+                if (await templateNpm.exists()) {
+                    log.success('更新模板成功');
+                    this.templateNpm = templateNpm;
+                }
             }
         }
     }
@@ -114,7 +165,9 @@ class InitCommand extends Command {
                 })
                 if (confirmDelete) {
                     //清空当前目录
-                    fse.emptyDirSync(localPath)
+                    const spinner = spinnerStart('正在清空目录...');
+                    fse.emptyDirSync(localPath);
+                    spinner.stop(true);
                 }
             }
         }

@@ -54,7 +54,7 @@ class Package {
                 console.log("SunOS platform");
                 break;
             case 'win32':
-                return path.resolve(this.storeDir, '.store', `${this.packageName}@${packageVersion}`);
+                return path.resolve(this.storeDir, '.store', `${this.packageName}@${packageVersion}`, 'node_modules', this.packageName);
             default:
                 console.log("unknown platform");
         }
