@@ -100,6 +100,8 @@ class Package {
                 }],
             })
             this.packageVersion = latestVersion;
+        } else {
+            this.packageVersion = latestVersion;
         }
     }
 
