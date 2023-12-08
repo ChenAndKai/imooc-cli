@@ -47,7 +47,7 @@ class InitCommand extends Command {
         } catch (error) {
             log.error(error.message)
             if (process.env.LOG_LEVEL === 'verbose') {
-                console.log(e);
+                console.log(error);
             }
         }
     }
@@ -134,7 +134,8 @@ class InitCommand extends Command {
             spinner.stop(true);
             log.success('模板安装成功')
         }
-        const ignore = ['node_modules/**','public/**'];
+        const templateIgnore = this.templateInfo.ignore || [];
+        const ignore = ['**/node_modules/**' ,...templateIgnore];
         await this.ejsRender({ignore});
         const { installCommand, startCommand } = this.templateInfo;
         //执行安装依赖命令
@@ -144,7 +145,27 @@ class InitCommand extends Command {
     }
 
     async installCustomTemplate() {
-        console.log('安装自定义模板');
+        //安装自定义模板
+        // if(await this)
+        if (await this.templateNpm.exists()) {
+            const rootFile = this.templateNpm.getRootFilePath();
+            if (fs.existsSync(rootFile)) {
+                log.notice('开始执行自定义模板');
+                const templatePath = path.resolve(this.templateNpm.cacheFilePath(), 'template');
+                const options = {
+                    templateInfo: this.templateInfo,
+                    projectInfo: this.projectInfo,
+                    sourcePath: templatePath,
+                    targetPath: process.cwd()
+                };
+                const code = `require('${rootFile}')(${JSON.stringify(options)})`;
+                log.verbose('code', code);
+                await execAsync('node', ['-e', code], { stdio: 'inherit', cwd: process.cwd() });
+                log.success('自定义模板安装成功');
+            } else {
+                throw new Error('自定义模板入口文件不存在');
+            }
+        }
     }
 
     async downloadTemplate() {
@@ -252,6 +273,7 @@ class InitCommand extends Command {
                 value: TYPE_COMPONENT
             }]
         });
+        this.template = this.template.filter(template => template.tag.includes(type));
         log.verbose('type', type);
         function ValidateName(v) {
             return /^[a-zA-Z]+([-][a-zA-Z][a-zA-Z0-9]*|[_][a-zA-Z][a-zA-Z0-9]*|[a-zA-Z0-9])*$/.test(v)
@@ -261,38 +283,37 @@ class InitCommand extends Command {
             isValidProjectName = true;
             projectInfo.projectName = this.projectName;
         }
-        //2、获取项目基本信息
-        if (type === TYPE_PROJECT) {
-            const projectPrompt = [];
-            if (!isValidProjectName) {
-                projectPrompt.push({
-                    type: 'input',
-                    name: 'projectName',
-                    message: '请输入项目名称',
-                    default: '',
-                    validate: function (v) {
-                        const done = this.async();
-                        //合法: a, a-b, a-b-c, a_b_c, a-b1-c1, a_b1_c1, a1-b1-c1, a1_b1_c1
-                        //不合法: 1, a-, a_, a_1, a-1
-                        setTimeout(() => {
-                            if (!ValidateName(v)) {
-                                done('请输入合法的项目名称');
-                                return;
-                            }
-                            done(null, true);
-                        }, 0)
-                    },
-                    filter: function (v) {
-                        return v;
-                    }
-                })
-            }
+        const title = type === TYPE_PROJECT ? '项目' : '组件';
+        const projectPrompt = [];
+        if (!isValidProjectName) {
+            projectPrompt.push({
+                type: 'input',
+                name: 'projectName',
+                message: `请输入${title}名称`,
+                default: '',
+                validate: function (v) {
+                    const done = this.async();
+                    //合法: a, a-b, a-b-c, a_b_c, a-b1-c1, a_b1_c1, a1-b1-c1, a1_b1_c1
+                    //不合法: 1, a-, a_, a_1, a-1
+                    setTimeout(() => {
+                        if (!ValidateName(v)) {
+                            done(`请输入合法的${title}名称`);
+                            return;
+                        }
+                        done(null, true);
+                    }, 0)
+                },
+                filter: function (v) {
+                    return v;
+                }
+            })
+        }
 
-            projectPrompt.push(
+        projectPrompt.push(
             {
                 type: 'input',
                 name: 'projectVersion',
-                message: '请输入项目版本号',
+                message: `请输入${title}版本号`,
                 default: '1.0.0',
                 validate: function (v) {
                     const done = this.async();
@@ -313,12 +334,15 @@ class InitCommand extends Command {
                     }
                 }
             }, {
-                type: 'list',
-                name: 'projectTemplate',
-                message: '请选择项目模板',
-                choices: this.createTemplateChoice()
-            })
+            type: 'list',
+            name: 'projectTemplate',
+            message: `请选择${title}模板`,
+            choices: this.createTemplateChoice()
+        })
 
+        //2、获取项目基本信息
+        if (type === TYPE_PROJECT) {
+           
             const project = await inquirer.prompt(projectPrompt)
             
             projectInfo = {
@@ -327,7 +351,32 @@ class InitCommand extends Command {
                 ...project,
             }
         } else if (type === TYPE_COMPONENT) {
-            
+            const descriptionPrompt = {
+                type: 'input',
+                name: 'componentDesc',
+                message: '请输入组件描述信息',
+                default: '',
+                validate: function (v) {
+                    const done = this.async();
+                    setTimeout(() => {
+                        if (!v) {
+                            done('请输入组件描述信息');
+                            return;
+                        }
+                        done(null, true);
+                    }, 0);
+                    return;
+                },
+            }
+
+            projectPrompt.push(descriptionPrompt);
+            const component = await inquirer.prompt(projectPrompt);
+
+            projectInfo = {
+                ...projectInfo,
+                type,
+                ...component
+            }
         }
 
         // 生成classname
@@ -337,6 +386,9 @@ class InitCommand extends Command {
         }
         if (projectInfo.projectVersion) {
             projectInfo.version = projectInfo.projectVersion
+        }
+        if (projectInfo.componentDesc) {
+            projectInfo.description = projectInfo.componentDesc
         }
         return projectInfo;
     }
